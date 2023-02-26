@@ -46,7 +46,7 @@ const setCurrentProducts = ({result, meta}) => {
 const fetchProducts = async (page = 1, size = 12) => {
   try {
     const response = await fetch(
-      `https://clear-fashion-api.vercel.app?page=${page}&size=${size}`
+        `https://clear-fashion-api.vercel.app?page=${page}&size=${size}`
     );
     const body = await response.json();
 
@@ -70,16 +70,16 @@ const renderProducts = products => {
   const fragment = document.createDocumentFragment();
   const div = document.createElement('div');
   const template = products
-    .map(product => {
-      return `
+      .map(product => {
+        return `
       <div class="product" id=${product.uuid}>
         <span>${product.brand}</span>
         <a href="${product.link}">${product.name}</a>
         <span>${product.price}</span>
       </div>
     `;
-    })
-    .join('');
+      })
+      .join('');
 
   div.innerHTML = template;
   fragment.appendChild(div);
@@ -94,8 +94,8 @@ const renderProducts = products => {
 const renderPagination = pagination => {
   const {currentPage, pageCount} = pagination;
   const options = Array.from(
-    {'length': pageCount},
-    (value, index) => `<option value="${index + 1}">${index + 1}</option>`
+      {'length': pageCount},
+      (value, index) => `<option value="${index + 1}">${index + 1}</option>`
   ).join('');
 
   selectPage.innerHTML = options;
@@ -122,6 +122,7 @@ const render = (products, pagination) => {
  * Declaration of all Listeners
  */
 
+
 /**
  * Select the number of products to display
  */
@@ -138,3 +139,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
 });
+
+/**
+ * Listen to page select change event - user story 2
+ */
+selectPage.addEventListener('change', async (event) => {
+  const products = await fetchProducts(parseInt(event.target.value), selectShow.value);
+
+  setCurrentProducts(products);
+  render(currentProducts, currentPagination);
+});
+
