@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
+const brand =  "CircleSportsWear"
 
 /**
  * Parse webpage e-shop
@@ -8,24 +9,28 @@ const cheerio = require('cheerio');
  */
 const parse = data => {
     const $ = cheerio.load(data);
-
-    return $('#product-grid .grid__item')
+    return $('.grid__item')
         .map((i, element) => {
-            const name = $(element)
-                .find('.full-unstyled-link')
+            let name = $(element)
+                .find('.card__heading')
                 .text()
                 .trim()
-                .replace(/\s/g, ' ')
-                .split("   ")[0];
+                .replace(/\s/g, ' ');
+            name = name.slice(0, 50);
+            name = name.trim()
             const price = parseInt(
                 $(element)
                     .find('.money')
                     .text()
-                    .split("€")[1]
-
+                    .slice(1)
             );
-            console.log(name);
-            return {name,price};
+            let link= $(element)
+                .find('.full-unstyled-link')
+                .attr("href")
+            let photo = $(element)
+                .find('img')
+                .attr('src')
+            return {name, price, brand,link, photo};
         })
         .get();
 };

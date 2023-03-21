@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
+const brand = "Dedicated Brand";
 
 /**
  * Parse webpage e-shop
@@ -7,24 +8,29 @@ const cheerio = require('cheerio');
  * @return {Array} products
  */
 const parse = data => {
-  const $ = cheerio.load(data);
+    const $ = cheerio.load(data);
 
-  return $('.productList-container .productList')
-    .map((i, element) => {
-      const name = $(element)
-        .find('.productList-title')
-        .text()
-        .trim()
-        .replace(/\s/g, ' ');
-      const price = parseInt(
-        $(element)
-          .find('.productList-price')
-          .text()
-      );
-
-      return {name, price};
-    })
-    .get();
+    return $('.productList-container .productList')
+        .map((i, element) => {
+            const name = $(element)
+                .find('.productList-title')
+                .text()
+                .trim()
+                .replace(/\s/g, ' ');
+            const price = parseInt(
+                $(element)
+                    .find('.productList-price')
+                    .text()
+            );
+            let link= $(element)
+                .find('.productList-link')
+                .attr("href")
+            let photo = $(element)
+                .find('img')
+                .attr('data-src')
+            return {name, price, brand, link, photo};
+        })
+        .get();
 };
 
 /**

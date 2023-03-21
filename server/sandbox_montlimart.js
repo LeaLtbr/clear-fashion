@@ -1,21 +1,25 @@
-/* eslint-disable no-console, no-process-exit */
 const Montlimartbrand = require('./eshops/Montlimart');
 const fs = require('fs').promises;
-async function sandbox (eshop = 'https://www.montlimart.com/37-vetements-recycles') {
+
+async function sandbox(eshops) {
     try {
-        console.log(`🕵️‍♀️  browsing ${eshop} eshop`);
+        for (let i = 0; i < eshops.length; i++) {
+            const eshop = eshops[i];
+            console.log(`🕵️‍♀️  browsing ${eshop} eshop`);
 
-        const products = await Montlimartbrand.scrape(eshop)
+            const products = await Montlimartbrand.scrape(eshop);
 
-        console.log(products);
+            console.log(products);
 
-        // Convert the products array to JSON format
-        const jsonProducts = JSON.stringify(products);
+            // Convert the products array to JSON format
+            const jsonProducts = JSON.stringify(products);
 
-        // Write the JSON data to a file called "products.json"
-        await fs.writeFile('products_montlimart.json', jsonProducts, 'utf8');
+            // Write the JSON data to a file named after the eshop's name
+            const eshopName = eshop.replace(/^https?:\/\//, '').replace(/[^a-zA-Z0-9]/g, '_');
+            await fs.writeFile(`products_${eshopName}.json`, jsonProducts, 'utf8');
 
-        console.log('File saved successfully!');
+            console.log(`File for ${eshop} saved successfully!`);
+        }
 
         console.log('done');
         process.exit(0);
@@ -25,6 +29,10 @@ async function sandbox (eshop = 'https://www.montlimart.com/37-vetements-recycle
     }
 }
 
-const [,, eshop] = process.argv;
+const eshops = [
+    'https://www.montlimart.com/99-vetements',
+    'https://www.montlimart.com/15-accessoires',
+    'https://www.montlimart.com/14-chaussures'
+];
 
-sandbox(eshop);
+sandbox(eshops);

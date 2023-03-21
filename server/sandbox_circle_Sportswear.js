@@ -1,21 +1,24 @@
-/* eslint-disable no-console, no-process-exit */
 const Circlebrand = require('./eshops/Circle_Sportswear');
 const fs = require('fs').promises;
-async function sandbox (eshop = 'https://shop.circlesportswear.com/collections/leggings') {
+
+async function sandbox (eshops) {
     try {
-        console.log(`🕵️‍♀️  browsing ${eshop} eshop`);
+        for (let i = 0; i < eshops.length; i++) {
+            console.log(`🕵️‍♀️  browsing ${eshops[i]} eshop`);
 
-        const products = await Circlebrand.scrape(eshop)
+            const products = await Circlebrand.scrape(eshops[i]);
 
-        console.log(products);
+            console.log(products);
 
-        // Convert the products array to JSON format
-        const jsonProducts = JSON.stringify(products);
+            // Convert the products array to JSON format
+            const jsonProducts = JSON.stringify(products);
 
-        // Write the JSON data to a file called "products.json"
-        await fs.writeFile('products_circle.json', jsonProducts, 'utf8');
+            // Write the JSON data to a file named after the eshop's name
+            const eshopName = eshops[i].replace(/^https?:\/\//, '').replace(/[^a-zA-Z0-9]/g, '_');
+            await fs.writeFile(`products_${eshopName}.json`, jsonProducts, 'utf8');
 
-        console.log('File saved successfully!');
+            console.log(`File for ${eshops[i]} saved successfully!`);
+        }
 
         console.log('done');
         process.exit(0);
@@ -25,6 +28,12 @@ async function sandbox (eshop = 'https://shop.circlesportswear.com/collections/l
     }
 }
 
-const [,, eshop] = process.argv;
+const eshops = [
+    'https://shop.circlesportswear.com/collections/collection-femme',
+    'https://shop.circlesportswear.com/collections/collection-homme',
+    'https://shop.circlesportswear.com/collections/accessoires',
+    'https://shop.circlesportswear.com/collections/accessoires'
 
-sandbox(eshop);
+];
+
+sandbox(eshops);
