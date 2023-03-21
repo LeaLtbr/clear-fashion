@@ -36,10 +36,16 @@ async function main() {
     const db = client.db(MONGODB_DB_NAME);
 
     try {
-        const data = fs.readFileSync('products_montlimart.json');
-        const products = JSON.parse(data);
+        const directoryPath = 'C:/Users/lealu/OneDrive/Documents/ESILV/A4/Semestre 2/Web Application Architecture/clear-fashion/server/my scrapped products';
+        const files = await fs.promises.readdir(directoryPath);
 
-        await insertProducts(db, products);
+        const promises = files.map(async (file) => {
+            const data = await fs.promises.readFile(`${directoryPath}/${file}`);
+            const products = JSON.parse(data);
+            return insertProducts(db, products);
+        });
+
+        await Promise.all(promises);
     } catch (error) {
         console.error(error);
     } finally {
@@ -49,31 +55,5 @@ async function main() {
 
 main();
 
-const brand = 'Montlimart';
-
-async function findProductsByBrand(db, brand) {
-    const collection = db.collection('products');
-    const products = await collection.find({ brand }).toArray();
-    console.log(`Found ${products.length} products for brand '${brand}'`);
-    console.log(products);
-}
-
-async function query1() {
-    const client = await MongoClient.connect(MONGODB_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    });
-    const db = client.db(MONGODB_DB_NAME);
-
-    try {
-        await findProductsByBrand(db, brand);
-    } catch (error) {
-        console.error(error);
-    } finally {
-        await client.close();
-    }
-}
-
-query1();
 
 

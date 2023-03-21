@@ -17,7 +17,6 @@ async function sandbox(eshops) {
             // Write the JSON data to a file named after the eshop's name
             const eshopName = eshop.replace(/^https?:\/\//, '').replace(/[^a-zA-Z0-9]/g, '_');
             await fs.writeFile(`products_${eshopName}.json`, jsonProducts, 'utf8');
-
             console.log(`File for ${eshop} saved successfully!`);
         }
 

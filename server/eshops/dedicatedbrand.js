@@ -28,7 +28,7 @@ const parse = data => {
             let photo = $(element)
                 .find('img')
                 .attr('data-src')
-            return {name, price, brand, link, photo};
+            return {link, brand, price, name, photo};
         })
         .get();
 };

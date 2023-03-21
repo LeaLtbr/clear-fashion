@@ -31,7 +31,6 @@ async function sandbox (eshops) {
 const eshops = [
     'https://shop.circlesportswear.com/collections/collection-femme',
     'https://shop.circlesportswear.com/collections/collection-homme',
-    'https://shop.circlesportswear.com/collections/accessoires',
     'https://shop.circlesportswear.com/collections/accessoires'
 
 ];
