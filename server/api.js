@@ -89,23 +89,22 @@ app.get('/sort', async (request, response) => {
 });
 
 app.get('/products', async (req, res) => {
-  const client = await MongoClient.connect(MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-  const db = client.db(MONGODB_DB_NAME);
-  const collection = db.collection('products');
-
   try {
-    const result = await collection.find({}).toArray();
-    res.json(result);
+    const response = await fetch('https://clear-fashion-rmwsy02b5-lealtbr.vercel.app/products');
+    const products = await response.json();
+    const brand = req.query.brand;
+    if (brand) {
+      const filteredProducts = products.filter(product => product.brand.toLowerCase() === brand.toLowerCase());
+      res.send(filteredProducts);
+    } else {
+      res.send(products);
+    }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
-  } finally {
-    await client.close();
+    res.status(500).send('Internal Server Error');
   }
 });
+
 
 app.get('/brands', async (req, res) => {
   const client = await MongoClient.connect(MONGODB_URI, {

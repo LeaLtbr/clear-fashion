@@ -133,6 +133,7 @@ const renderSearchProducts = products => {
       .map(product => {
         return `
       <div class="product" id=${product._id}>
+        <img src="${product.photo}" style="width: 100px; height: 100px;">
         <span>${product.brand}</span>
         <a href="${product.link}" target="_blank">${product.name}</a>
         <span>${product.price}€</span>
@@ -151,6 +152,7 @@ const renderFavoriteProducts = products => {
       .map(product => {
         return `
       <div class="product" id=${product._id}>
+        <img src="${product.photo}" style="width: 100px; height: 100px;">
         <span>${product.brand}</span>
         <a href="${product.link}" target="_blank">${product.name}</a>
         <span>${product.price}€</span>
@@ -164,6 +166,7 @@ const renderFavoriteProducts = products => {
   spanNbFavoriteProducts.innerHTML = favorite_products.length + (favorite_products.length > 1 ? ' favorite products' : ' favorite product');
   sectionFavoriteProducts.innerHTML = template;
 };
+
 
 /**
  * Declaration of all Listeners
