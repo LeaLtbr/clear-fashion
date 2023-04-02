@@ -31,34 +31,47 @@ const sectionFavoriteProducts = document.querySelector('#favoriteProducts');
  * Fetch API
  */
 
-const fetchProducts = async (show=12, page=1, brand="",price="") => {
+const fetchProducts = async (brand = "", price = "") => {
   try {
-    let url = `https://clear-fashion-rmwsy02b5-lealtbr.vercel.app/search?brand=${brand}&price=${price}`;
-    ///let url = `http://localhost:8092/products/search?page=${page}&limit=${show}&brand=${brand}&price=${price}`;
+    let url = `https://clear-fashion-pqn7caxc5-lealtbr.vercel.app/products/?brand=${brand}&price=${price}`;
     console.log(url);
     const response = await fetch(url);
     const body = await response.json();
 
+    // Filter out products that do not belong to the selected brand
+    const filteredProducts = brand === 'All'
+        ? body.data
+        : body.data.filter(product => product.brand === brand);
+
     const currentPage = body.currentPage;
     const totalPages = body.totalPages;
-    spanNbSearchProducts.innerHTML = body.totalCount + ' products found';
+    spanNbSearchProducts.innerHTML = body.totalCount + " products found";
     const options = Array.from(
-        {'length': totalPages},
+        { length: totalPages },
         (value, index) => `<option value="${index + 1}">${index + 1}</option>`
-    ).join('');
+    ).join("");
     selectPage.innerHTML = options;
     selectPage.selectedIndex = currentPage - 1;
-    return body.data;
+    return filteredProducts;
   } catch (error) {
     console.error(error);
     return currentProducts;
   }
 };
 
+
+const filterByBrand = async (selectedBrand) => {
+  brand = selectedBrand;
+  currentProducts = await fetchProducts(show, page, brand, price);
+  renderSearchProducts(currentProducts);
+};
+
+
+
 const fetchAllProducts = async () => {
   try {
     const response = await fetch(
-        'https://clear-fashion-rmwsy02b5-lealtbr.vercel.app/products'
+        'https://clear-fashion-pqn7caxc5-lealtbr.vercel.app/products'
         ///`http://localhost:8092/products`
     );
     const body = await response.json();
@@ -72,7 +85,7 @@ const fetchAllProducts = async () => {
 const fetchBrands = async () => {
   try {
     const response = await fetch(
-        'https://clear-fashion-rmwsy02b5-lealtbr.vercel.app/brands'
+        'https://clear-fashion-pqn7caxc5-lealtbr.vercel.app/brands'
         //`http://localhost:8092/brands`
     );
     const body = await response.json();
@@ -86,7 +99,7 @@ const fetchBrands = async () => {
 const fetchSortProducts = async (sort=-1) => {
   try {
     const response = await fetch(
-        `https://clear-fashion-rmwsy02b5-lealtbr.vercel.app/sort?sort=${sort}`
+        `https://clear-fashion-pqn7caxc5-lealtbr.vercel.app/sort?sort=${sort}`
         ///`http://localhost:8092/sort?sort=${sort}`
     );
     const body = await response.json();
@@ -133,7 +146,7 @@ const renderSearchProducts = products => {
       .map(product => {
         return `
       <div class="product" id=${product._id}>
-        <img src="${product.photo}" style="width: 100px; height: 100px;">
+        <img src="${product.photo}" style="width: 250px; height: 250px;">
         <span>${product.brand}</span>
         <a href="${product.link}" target="_blank">${product.name}</a>
         <span>${product.price}€</span>
@@ -185,15 +198,12 @@ selectPage.addEventListener('change', async (event) => {
   renderSearchProducts(products);
 });
 
-selectBrand.addEventListener('change', async (event) => {
+
+selectBrand.addEventListener("change", (event) => {
   brand = event.target.value;
-  if(brand=='All'){
-    brand="";
-  }
-  page = 1;
-  let products = await fetchProducts(show=show, page=page, brand=brand, price="")
-  renderSearchProducts(products);
+  filterByBrand(brand);
 });
+
 
 selectPrice.addEventListener('change', async (event) => {
   price = event.target.value;
