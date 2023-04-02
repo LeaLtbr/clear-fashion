@@ -72,7 +72,7 @@ const fetchAllProducts = async () => {
   try {
     const response = await fetch(
         'https://clear-fashion-pqn7caxc5-lealtbr.vercel.app/products'
-        ///`http://localhost:8092/products`
+
     );
     const body = await response.json();
     return body;
@@ -86,7 +86,6 @@ const fetchBrands = async () => {
   try {
     const response = await fetch(
         'https://clear-fashion-pqn7caxc5-lealtbr.vercel.app/brands'
-        //`http://localhost:8092/brands`
     );
     const body = await response.json();
     return body;
@@ -100,7 +99,6 @@ const fetchSortProducts = async (sort=-1) => {
   try {
     const response = await fetch(
         `https://clear-fashion-pqn7caxc5-lealtbr.vercel.app/sort?sort=${sort}`
-        ///`http://localhost:8092/sort?sort=${sort}`
     );
     const body = await response.json();
     return body;
