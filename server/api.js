@@ -60,6 +60,71 @@ app.get('/products/search', async (req, res, next) => {
   }
 });
 
+app.get('/sort', async (request, response) => {
+  const client = await MongoClient.connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  const collection = client.db(MONGODB_DB_NAME).collection('products');
+  const sortVal = request.query.sort;
+
+  const sortType = {};
+  if (sortVal === '1') {
+    sortType.price = 1;
+  } else if (sortVal === '-1') {
+    sortType.price = -1;
+  } else {
+    sortType.price = 0;
+  }
+
+  try {
+    const result = await collection.find({}).sort(sortType).toArray();
+    response.json(result);
+  } catch (error) {
+    console.error(error);
+    response.status(500).json({ error: 'Internal server error' });
+  } finally {
+    await client.close();
+  }
+});
+
+app.get('/products', async (req, res) => {
+  const client = await MongoClient.connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  const db = client.db(MONGODB_DB_NAME);
+  const collection = db.collection('products');
+
+  try {
+    const result = await collection.find({}).toArray();
+    res.json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    await client.close();
+  }
+});
+
+app.get('/brands', async (req, res) => {
+  const client = await MongoClient.connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  const db = client.db(MONGODB_DB_NAME);
+  const collection = db.collection('products');
+
+  try {
+    const result = await collection.distinct('brand');
+    res.json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    await client.close();
+  }
+});
 
 app.get('/products/:id', async (req, res) => {
   const productId = req.params.id;
@@ -85,5 +150,3 @@ app.get('/products/:id', async (req, res) => {
     await client.close();
   }
 });
-
-
